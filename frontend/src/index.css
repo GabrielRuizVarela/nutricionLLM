@@ -1,68 +1,145 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/*
+ * NutriAI Theme System
+ *
+ * 🎨 CUSTOMIZE YOUR COLORS HERE!
+ * All theme colors are controlled by CSS variables below.
+ * Simply edit the values in the :root section to change the entire app's color scheme.
+ *
+ * Color format: HSL (Hue Saturation% Lightness%)
+ * Example: 142 76% 36% = Green color
+ *
+ * Quick color picker: https://ui.shadcn.com/themes
+ */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /*
+     * 🌟 PRIMARY BRAND COLOR
+     * This is your main brand color used for buttons, links, and primary actions.
+     * Default: Fresh Green (nutrition-focused)
+     */
+    --primary: 142 76% 36%;           /* #22c55e - Vibrant green */
+    --primary-foreground: 0 0% 100%;  /* White text on primary */
+
+    /*
+     * 🎯 SECONDARY COLOR
+     * Used for less prominent UI elements.
+     */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    /*
+     * ✨ ACCENT COLOR
+     * For highlights, hover states, and call-to-action elements.
+     */
+    --accent: 24 100% 50%;             /* #ff8000 - Energy orange */
+    --accent-foreground: 0 0% 100%;
+
+    /*
+     * 🏠 BACKGROUND & SURFACES
+     */
+    --background: 0 0% 100%;           /* White */
+    --foreground: 240 10% 3.9%;       /* Dark text */
+
+    /* Cards and elevated surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    /* Popovers and dropdowns */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /*
+     * 🎛️ UI ELEMENTS
+     */
+    --border: 240 5.9% 90%;            /* Subtle borders */
+    --input: 240 5.9% 90%;             /* Input borders */
+    --ring: 142 76% 36%;               /* Focus ring (matches primary) */
+
+    /* Muted backgrounds for less emphasis */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /*
+     * 🚨 STATUS COLORS
+     */
+    --destructive: 0 84.2% 60.2%;      /* Red for errors/delete */
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 76% 36%;             /* Green for success */
+    --warning: 38 92% 50%;              /* Amber for warnings */
+
+    /* Border radius */
+    --radius: 0.5rem;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+
+  .dark {
+    /*
+     * 🌙 DARK MODE
+     * Automatically applied when dark mode is enabled
+     */
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --accent: 24 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142 76% 36%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 }
+
+@layer base {
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
+}
+
+/*
+ * 📝 PRESET THEMES (Uncomment to use)
+ *
+ * Option 1: Fresh & Healthy (Default - already active above)
+ * --primary: 142 76% 36%;  (Green)
+ * --accent: 24 100% 50%;   (Orange)
+ *
+ * Option 2: Professional Medical
+ * --primary: 221 83% 53%;  (Blue)
+ * --accent: 142 76% 36%;   (Green)
+ *
+ * Option 3: Warm & Inviting
+ * --primary: 12 76% 61%;   (Coral)
+ * --accent: 38 92% 50%;    (Amber)
+ *
+ * To change theme: Copy the values above and paste them in the :root section
+ */

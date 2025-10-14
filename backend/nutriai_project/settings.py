@@ -147,6 +147,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-# LLM Studio configuration
-LLM_STUDIO_URL = "http://localhost:1234/v1/chat/completions"
-LLM_STUDIO_MODEL = "llama3:8b"
+# LLM configuration
+# LLM Studio (uncomment to use)
+# LLM_STUDIO_URL = "http://localhost:1234/v1/chat/completions"
+# LLM_STUDIO_MODEL = "llama3:8b"
+
+# Ollama configuration (active)
+LLM_STUDIO_URL = "http://localhost:11434/v1/chat/completions"
+LLM_STUDIO_MODEL = "qwen2.5:4b"
