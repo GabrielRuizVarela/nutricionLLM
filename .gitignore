@@ -1,1 +1,25 @@
 backend/.DS_Store
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+env/
+.venv/
+venv/
+ENV/
+
+# macOS
+.DS_Store
+
+# Test and coverage
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Database
+*.sqlite3
+
+# Environment variables
+.env
