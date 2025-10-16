@@ -154,4 +154,4 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Ollama configuration (active)
 LLM_STUDIO_URL = "http://localhost:11434/v1/chat/completions"
-LLM_STUDIO_MODEL = "qwen2.5:4b"
+LLM_STUDIO_MODEL = "qwen3:4b"

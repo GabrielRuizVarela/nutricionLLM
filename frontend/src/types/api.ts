@@ -45,16 +45,16 @@ export interface RecipeGenerateRequest {
 
 export interface Recipe {
   id?: number
-  nombre: string
-  ingredientes_texto: string
-  pasos_texto: string
-  calorias: number
-  proteinas: number
-  carbohidratos: number
-  grasas: number
-  tiempo_min: number
-  tipo: string
+  name: string
+  ingredients: string
+  steps: string
+  calories: number
+  protein: number
+  carbs: number
+  fats: number
+  prep_time_minutes: number
+  meal_type: string
   created_at?: string
 }
 
-export type MealType = 'desayuno' | 'almuerzo' | 'cena' | 'snack'
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack'

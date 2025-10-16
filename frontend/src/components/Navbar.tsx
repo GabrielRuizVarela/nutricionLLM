@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { authService } from '@/services/auth'
 
 export default function Navbar() {
@@ -18,7 +19,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b">
+    <nav className="border-b dark:border-b-gray-800">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-primary">
@@ -46,6 +47,7 @@ export default function Navbar() {
                 >
                   Recipes
                 </Link>
+                <ThemeToggle />
                 <Button
                   variant="outline"
                   size="sm"
@@ -67,6 +69,7 @@ export default function Navbar() {
                     Register
                   </Button>
                 </Link>
+                <ThemeToggle />
               </>
             )}
           </div>

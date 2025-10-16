@@ -2,9 +2,12 @@
 LLM Service for recipe generation using LLM Studio.
 """
 import json
+import logging
 import httpx
 from django.conf import settings
 from typing import Dict, Optional
+
+logger = logging.getLogger(__name__)
 
 
 class LLMService:
@@ -54,18 +57,22 @@ class LLMService:
         recipe_data = self._parse_recipe_json(response_text)
 
         if recipe_data:
+            logger.info("Recipe generated and parsed successfully")
             return recipe_data
 
         # If parsing failed, retry with correction prompt
+        logger.warning(f"Initial JSON parsing failed. Response was: {response_text[:500]}...")
         correction_prompt = self._build_correction_prompt(response_text)
         corrected_response = self._call_llm(correction_prompt)
 
         recipe_data = self._parse_recipe_json(corrected_response)
 
         if recipe_data:
+            logger.info("Recipe parsed successfully after correction")
             return recipe_data
 
         # Both attempts failed
+        logger.error(f"Failed to parse recipe after retry. Last response: {corrected_response[:500]}...")
         raise Exception("Could not generate a valid recipe. Please try again.")
 
     def _build_prompt(
@@ -77,40 +84,40 @@ class LLMService:
         available_ingredients: str
     ) -> str:
         """Build the initial prompt for recipe generation"""
-        base_prompt = """Eres un asistente nutricional experto. Genera una receta en formato JSON con EXACTAMENTE estos campos:
-- nombre (string)
-- ingredientes (string, lista separada por comas)
-- pasos (string, pasos numerados separados por puntos)
-- calorias (int)
-- proteinas (float)
-- carbohidratos (float)
-- grasas (float)
-- tiempo_min (int)
-- tipo (string: desayuno, almuerzo, cena o snack)
+        base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format with EXACTLY these fields:
+- name (string)
+- ingredients (string, comma-separated list)
+- steps (string, numbered steps separated by periods)
+- calories (int)
+- protein (float in grams)
+- carbs (float in grams)
+- fats (float in grams)
+- prep_time_minutes (int)
+- meal_type (string: breakfast, lunch, dinner, or snack)
 
-Contexo del usuario:"""
+User context:"""
 
         prompt_parts = [base_prompt]
 
         if goal:
-            prompt_parts.append(f"- Objetivo: {goal}")
+            prompt_parts.append(f"- Goal: {goal}")
 
         if dietary_preferences:
-            prompt_parts.append(f"- Preferencias: {dietary_preferences}")
+            prompt_parts.append(f"- Dietary preferences: {dietary_preferences}")
 
-        prompt_parts.append(f"- Tipo de comida: {meal_type}")
-        prompt_parts.append(f"- Tiempo disponible: {available_time} minutos")
+        prompt_parts.append(f"- Meal type: {meal_type}")
+        prompt_parts.append(f"- Available time: {available_time} minutes")
 
         if available_ingredients:
-            prompt_parts.append(f"- Ingredientes disponibles: {available_ingredients}")
+            prompt_parts.append(f"- Available ingredients: {available_ingredients}")
 
-        prompt_parts.append("\nResponde SOLO con el objeto JSON. Nada de texto adicional.")
+        prompt_parts.append("\nRespond ONLY with the JSON object. No additional text.")
 
         return "\n".join(prompt_parts)
 
     def _build_correction_prompt(self, original_response: str) -> str:
         """Build a correction prompt for malformed JSON"""
-        return f"""The following text contains a recipe but is not valid JSON. Extract the information and output ONLY a valid JSON object with these fields: nombre, ingredientes, pasos, calorias, proteinas, carbohidratos, grasas, tiempo_min, tipo.
+        return f"""The following text contains a recipe but is not valid JSON. Extract the information and output ONLY a valid JSON object with these fields: name, ingredients, steps, calories, protein, carbs, fats, prep_time_minutes, meal_type.
 
 Text: '{original_response}'
 
@@ -141,17 +148,24 @@ Output only valid JSON, nothing else."""
         }
 
         try:
+            logger.info(f"Calling LLM API at {self.url} with model {self.model}")
+            logger.debug(f"Prompt: {prompt[:200]}...")  # Log first 200 chars
+
             response = httpx.post(
                 self.url,
                 json=payload,
-                timeout=30.0
+                timeout=600.0  # 10 minutes for local LLM processing
             )
             response.raise_for_status()
 
             data = response.json()
+            logger.info(f"LLM API response received successfully")
+            logger.debug(f"Response: {str(data)[:200]}...")
+
             return data['choices'][0]['message']['content']
 
         except Exception as e:
+            logger.error(f"LLM API call failed: {str(e)}", exc_info=True)
             raise Exception(f"LLM API call failed: {str(e)}")
 
     def _parse_recipe_json(self, response_text: str) -> Optional[Dict]:
@@ -170,8 +184,8 @@ Output only valid JSON, nothing else."""
 
             # Validate required fields
             required_fields = [
-                'nombre', 'ingredientes', 'pasos', 'calorias',
-                'proteinas', 'carbohidratos', 'grasas', 'tiempo_min', 'tipo'
+                'name', 'ingredients', 'steps', 'calories',
+                'protein', 'carbs', 'fats', 'prep_time_minutes', 'meal_type'
             ]
 
             if all(field in recipe_data for field in required_fields):

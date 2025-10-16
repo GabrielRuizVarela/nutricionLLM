@@ -90,15 +90,15 @@ export const handlers = [
     }
 
     return HttpResponse.json({
-      nombre: 'Ensalada de Lentejas',
-      ingredientes_texto: '1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon',
-      pasos_texto: '1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.',
-      calorias: 320,
-      proteinas: 18.5,
-      carbohidratos: 45.0,
-      grasas: 8.2,
-      tiempo_min: 10,
-      tipo: body.meal_type,
+      name: 'Lentil Salad',
+      ingredients: '1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon',
+      steps: '1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.',
+      calories: 320,
+      protein: 18.5,
+      carbs: 45.0,
+      fats: 8.2,
+      prep_time_minutes: 10,
+      meal_type: body.meal_type,
     })
   }),
 
@@ -106,28 +106,28 @@ export const handlers = [
     return HttpResponse.json([
       {
         id: 1,
-        nombre: 'Ensalada de Lentejas',
-        ingredientes_texto: 'lentils, cucumber, tomatoes',
-        pasos_texto: '1. Cook. 2. Mix.',
-        calorias: 320,
-        proteinas: 18.5,
-        carbohidratos: 45.0,
-        grasas: 8.2,
-        tiempo_min: 10,
-        tipo: 'almuerzo',
+        name: 'Lentil Salad',
+        ingredients: 'lentils, cucumber, tomatoes',
+        steps: '1. Cook. 2. Mix.',
+        calories: 320,
+        protein: 18.5,
+        carbs: 45.0,
+        fats: 8.2,
+        prep_time_minutes: 10,
+        meal_type: 'lunch',
         created_at: '2025-01-01T00:00:00Z',
       },
       {
         id: 2,
-        nombre: 'Smoothie Verde',
-        ingredientes_texto: 'spinach, banana, almond milk',
-        pasos_texto: '1. Blend all ingredients.',
-        calorias: 150,
-        proteinas: 5.0,
-        carbohidratos: 25.0,
-        grasas: 3.0,
-        tiempo_min: 5,
-        tipo: 'desayuno',
+        name: 'Green Smoothie',
+        ingredients: 'spinach, banana, almond milk',
+        steps: '1. Blend all ingredients.',
+        calories: 150,
+        protein: 5.0,
+        carbs: 25.0,
+        fats: 3.0,
+        prep_time_minutes: 5,
+        meal_type: 'breakfast',
         created_at: '2025-01-02T00:00:00Z',
       },
     ])
@@ -135,15 +135,15 @@ export const handlers = [
 
   http.post(`${API_BASE}/recetas/`, async ({ request }) => {
     const body = await request.json() as {
-      nombre: string
-      ingredientes_texto: string
-      pasos_texto: string
-      calorias: number
-      proteinas: number
-      carbohidratos: number
-      grasas: number
-      tiempo_min: number
-      tipo: string
+      name: string
+      ingredients: string
+      steps: string
+      calories: number
+      protein: number
+      carbs: number
+      fats: number
+      prep_time_minutes: number
+      meal_type: string
     }
 
     return HttpResponse.json(
@@ -159,15 +159,15 @@ export const handlers = [
   http.get(`${API_BASE}/recetas/:id/`, ({ params }) => {
     return HttpResponse.json({
       id: Number(params.id),
-      nombre: 'Ensalada de Lentejas',
-      ingredientes_texto: 'lentils, cucumber, tomatoes',
-      pasos_texto: '1. Cook. 2. Mix.',
-      calorias: 320,
-      proteinas: 18.5,
-      carbohidratos: 45.0,
-      grasas: 8.2,
-      tiempo_min: 10,
-      tipo: 'almuerzo',
+      name: 'Lentil Salad',
+      ingredients: 'lentils, cucumber, tomatoes',
+      steps: '1. Cook. 2. Mix.',
+      calories: 320,
+      protein: 18.5,
+      carbs: 45.0,
+      fats: 8.2,
+      prep_time_minutes: 10,
+      meal_type: 'lunch',
       created_at: '2025-01-01T00:00:00Z',
     })
   }),

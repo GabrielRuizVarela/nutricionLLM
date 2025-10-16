@@ -1,6 +1,7 @@
 """
 Views for recipe generation, saving, and listing.
 """
+import logging
 from rest_framework import status, generics, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,6 +10,8 @@ from rest_framework.views import APIView
 from recipes.models import Receta
 from recipes.serializers import RecipeGenerationSerializer, RecetaSerializer
 from recipes.llm_service import LLMService
+
+logger = logging.getLogger(__name__)
 
 
 class RecipeGenerationView(APIView):
@@ -49,23 +52,11 @@ class RecipeGenerationView(APIView):
                 available_ingredients=available_ingredients
             )
 
-            # Map LLM response to our model format
-            # LLM returns 'ingredientes' and 'pasos', we need 'ingredientes_texto' and 'pasos_texto'
-            formatted_recipe = {
-                'nombre': recipe_data.get('nombre'),
-                'ingredientes_texto': recipe_data.get('ingredientes'),
-                'pasos_texto': recipe_data.get('pasos'),
-                'calorias': recipe_data.get('calorias'),
-                'proteinas': recipe_data.get('proteinas'),
-                'carbohidratos': recipe_data.get('carbohidratos'),
-                'grasas': recipe_data.get('grasas'),
-                'tiempo_min': recipe_data.get('tiempo_min'),
-                'tipo': recipe_data.get('tipo')
-            }
-
-            return Response(formatted_recipe, status=status.HTTP_200_OK)
+            # LLM now returns English field names that match our model directly
+            return Response(recipe_data, status=status.HTTP_200_OK)
 
         except Exception as e:
+            logger.error(f"Recipe generation failed: {str(e)}", exc_info=True)
             return Response({
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

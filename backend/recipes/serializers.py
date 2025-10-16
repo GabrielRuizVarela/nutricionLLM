@@ -7,7 +7,7 @@ from recipes.models import Receta
 
 class RecipeGenerationSerializer(serializers.Serializer):
     """Serializer for recipe generation request"""
-    MEAL_TYPE_CHOICES = ['desayuno', 'almuerzo', 'cena', 'snack']
+    MEAL_TYPE_CHOICES = ['breakfast', 'lunch', 'dinner', 'snack']
 
     meal_type = serializers.ChoiceField(
         choices=MEAL_TYPE_CHOICES,
@@ -30,9 +30,9 @@ class RecetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receta
         fields = [
-            'id', 'nombre', 'ingredientes_texto', 'pasos_texto',
-            'calorias', 'proteinas', 'carbohidratos', 'grasas',
-            'tiempo_min', 'tipo', 'created_at'
+            'id', 'name', 'ingredients', 'steps',
+            'calories', 'protein', 'carbs', 'fats',
+            'prep_time_minutes', 'meal_type', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 

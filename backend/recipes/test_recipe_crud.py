@@ -34,20 +34,20 @@ class TestRecipeSaving:
         AC: POST request to /api/recetas/ creates a Receta object.
         """
         data = {
-            "nombre": "Lentil Salad",
-            "ingredientes_texto": "1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon",
-            "pasos_texto": "1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.",
-            "calorias": 320,
-            "proteinas": 18.5,
-            "carbohidratos": 45.0,
-            "grasas": 8.2,
-            "tiempo_min": 10,
-            "tipo": "almuerzo"
+            "name": "Lentil Salad",
+            "ingredients": "1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon",
+            "steps": "1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.",
+            "calories": 320,
+            "protein": 18.5,
+            "carbs": 45.0,
+            "fats": 8.2,
+            "prep_time_minutes": 10,
+            "meal_type": "lunch"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert Receta.objects.filter(nombre="Lentil Salad").exists()
+        assert Receta.objects.filter(name="Lentil Salad").exists()
 
     def test_saved_recipe_is_linked_to_user(self):
         """
@@ -55,20 +55,20 @@ class TestRecipeSaving:
         AC: The backend creates a Receta object linked to the current user.
         """
         data = {
-            "nombre": "User Recipe",
-            "ingredientes_texto": "ingredients",
-            "pasos_texto": "1. Step one",
-            "calorias": 300,
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "cena"
+            "name": "User Recipe",
+            "ingredients": "ingredients",
+            "steps": "1. Step one",
+            "calories": 300,
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "dinner"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
-        recipe = Receta.objects.get(nombre="User Recipe")
+        recipe = Receta.objects.get(name="User Recipe")
         assert recipe.user == self.test_user
 
     def test_save_recipe_returns_success_message(self):
@@ -77,20 +77,20 @@ class TestRecipeSaving:
         AC: A success message is shown: "Recipe saved."
         """
         data = {
-            "nombre": "Success Recipe",
-            "ingredientes_texto": "ingredients",
-            "pasos_texto": "1. Cook",
-            "calorias": 250,
-            "proteinas": 12.0,
-            "carbohidratos": 35.0,
-            "grasas": 8.0,
-            "tiempo_min": 15,
-            "tipo": "desayuno"
+            "name": "Success Recipe",
+            "ingredients": "ingredients",
+            "steps": "1. Cook",
+            "calories": 250,
+            "protein": 12.0,
+            "carbs": 35.0,
+            "fats": 8.0,
+            "prep_time_minutes": 15,
+            "meal_type": "breakfast"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert 'id' in response.data or 'nombre' in response.data
+        assert 'id' in response.data or 'name' in response.data
 
     def test_save_recipe_requires_authentication(self):
         """
@@ -99,15 +99,15 @@ class TestRecipeSaving:
         self.client.credentials()  # Remove authentication
 
         data = {
-            "nombre": "Test Recipe",
-            "ingredientes_texto": "ingredients",
-            "pasos_texto": "steps",
-            "calorias": 300,
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "almuerzo"
+            "name": "Test Recipe",
+            "ingredients": "ingredients",
+            "steps": "steps",
+            "calories": 300,
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "lunch"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
@@ -119,7 +119,7 @@ class TestRecipeSaving:
         AC: Recipe model has all required fields.
         """
         data = {
-            "nombre": "Incomplete Recipe"
+            "name": "Incomplete Recipe"
             # Missing other required fields
         }
         response = self.client.post(self.recipes_url, data, format='json')
@@ -129,18 +129,18 @@ class TestRecipeSaving:
     def test_save_recipe_validates_meal_type_choices(self):
         """
         Test that meal type must be one of valid choices.
-        AC: tipo field has choices: desayuno, almuerzo, cena, snack.
+        AC: meal_type field has choices: breakfast, lunch, dinner, snack.
         """
         data = {
-            "nombre": "Invalid Type Recipe",
-            "ingredientes_texto": "ingredients",
-            "pasos_texto": "steps",
-            "calorias": 300,
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "invalid_type"
+            "name": "Invalid Type Recipe",
+            "ingredients": "ingredients",
+            "steps": "steps",
+            "calories": 300,
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "invalid_type"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
@@ -151,15 +151,15 @@ class TestRecipeSaving:
         Test that numeric fields must be positive.
         """
         data = {
-            "nombre": "Negative Calories",
-            "ingredientes_texto": "ingredients",
-            "pasos_texto": "steps",
-            "calorias": -100,  # Invalid
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "almuerzo"
+            "name": "Negative Calories",
+            "ingredients": "ingredients",
+            "steps": "steps",
+            "calories": -100,  # Invalid
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "lunch"
         }
         response = self.client.post(self.recipes_url, data, format='json')
 
@@ -193,40 +193,40 @@ class TestRecipeList:
         # Create some test recipes
         Receta.objects.create(
             user=self.test_user,
-            nombre="Recipe 1",
-            ingredientes_texto="ingredients 1",
-            pasos_texto="steps 1",
-            calorias=300,
-            proteinas=15.0,
-            carbohidratos=40.0,
-            grasas=10.0,
-            tiempo_min=20,
-            tipo="desayuno"
+            name="Recipe 1",
+            ingredients="ingredients 1",
+            steps="steps 1",
+            calories=300,
+            protein=15.0,
+            carbs=40.0,
+            fats=10.0,
+            prep_time_minutes=20,
+            tipo="breakfast"
         )
         Receta.objects.create(
             user=self.test_user,
-            nombre="Recipe 2",
-            ingredientes_texto="ingredients 2",
-            pasos_texto="steps 2",
-            calorias=400,
-            proteinas=20.0,
-            carbohidratos=50.0,
-            grasas=15.0,
-            tiempo_min=30,
-            tipo="almuerzo"
+            name="Recipe 2",
+            ingredients="ingredients 2",
+            steps="steps 2",
+            calories=400,
+            protein=20.0,
+            carbs=50.0,
+            fats=15.0,
+            prep_time_minutes=30,
+            tipo="lunch"
         )
         # Recipe for other user
         Receta.objects.create(
             user=self.other_user,
-            nombre="Other User Recipe",
-            ingredientes_texto="other ingredients",
-            pasos_texto="other steps",
-            calorias=350,
-            proteinas=18.0,
-            carbohidratos=45.0,
-            grasas=12.0,
-            tiempo_min=25,
-            tipo="cena"
+            name="Other User Recipe",
+            ingredients="other ingredients",
+            steps="other steps",
+            calories=350,
+            protein=18.0,
+            carbs=45.0,
+            fats=12.0,
+            prep_time_minutes=25,
+            tipo="dinner"
         )
 
     def test_get_user_recipes_list(self):
@@ -251,7 +251,7 @@ class TestRecipeList:
 
         # Should have 2 recipes (not 3, excluding other user's recipe)
         assert len(results) == 2
-        recipe_names = [r['nombre'] for r in results]
+        recipe_names = [r['name'] for r in results]
         assert "Recipe 1" in recipe_names
         assert "Recipe 2" in recipe_names
         assert "Other User Recipe" not in recipe_names
@@ -267,8 +267,8 @@ class TestRecipeList:
         results = response.data if isinstance(response.data, list) else response.data['results']
 
         # Most recent should be Recipe 2 (created last)
-        assert results[0]['nombre'] == "Recipe 2"
-        assert results[1]['nombre'] == "Recipe 1"
+        assert results[0]['name'] == "Recipe 2"
+        assert results[1]['name'] == "Recipe 1"
 
     def test_recipe_list_includes_essential_info(self):
         """
@@ -281,7 +281,7 @@ class TestRecipeList:
         results = response.data if isinstance(response.data, list) else response.data['results']
 
         for recipe in results:
-            assert 'nombre' in recipe
+            assert 'name' in recipe
             assert 'tipo' in recipe
             assert 'created_at' in recipe
 
@@ -296,10 +296,10 @@ class TestRecipeList:
         response = self.client.get(detail_url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['nombre'] == recipe.nombre
-        assert 'ingredientes_texto' in response.data
-        assert 'pasos_texto' in response.data
-        assert 'calorias' in response.data
+        assert response.data['name'] == recipe.name
+        assert 'ingredients' in response.data
+        assert 'steps' in response.data
+        assert 'calories' in response.data
 
     def test_recipe_list_requires_authentication(self):
         """

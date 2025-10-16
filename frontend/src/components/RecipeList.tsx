@@ -76,27 +76,27 @@ export default function RecipeList() {
             className="border rounded-lg p-6 space-y-4 hover:shadow-lg transition-shadow"
           >
             <div>
-              <h2 className="text-xl font-bold">{recipe.nombre}</h2>
+              <h2 className="text-xl font-bold">{recipe.name}</h2>
               <p className="text-sm text-muted-foreground">
-                {recipe.tiempo_min} minutes • {recipe.tipo}
+                {recipe.prep_time_minutes} minutes • {recipe.meal_type}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-lg font-bold text-primary">{recipe.calorias}</p>
+                <p className="text-lg font-bold text-primary">{recipe.calories}</p>
                 <p className="text-xs text-muted-foreground">Calories</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-primary">{recipe.proteinas}g</p>
+                <p className="text-lg font-bold text-primary">{recipe.protein}g</p>
                 <p className="text-xs text-muted-foreground">Protein</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-primary">{recipe.carbohidratos}g</p>
+                <p className="text-lg font-bold text-primary">{recipe.carbs}g</p>
                 <p className="text-xs text-muted-foreground">Carbs</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-primary">{recipe.grasas}g</p>
+                <p className="text-lg font-bold text-primary">{recipe.fats}g</p>
                 <p className="text-xs text-muted-foreground">Fats</p>
               </div>
             </div>
@@ -104,14 +104,14 @@ export default function RecipeList() {
             <div>
               <h3 className="text-sm font-semibold mb-1">Ingredients</h3>
               <p className="text-sm text-muted-foreground line-clamp-2">
-                {recipe.ingredientes_texto}
+                {recipe.ingredients}
               </p>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold mb-1">Instructions</h3>
               <p className="text-sm text-muted-foreground line-clamp-3">
-                {recipe.pasos_texto}
+                {recipe.steps}
               </p>
             </div>
           </article>

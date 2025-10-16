@@ -43,35 +43,35 @@ class TestRecipeGeneration:
         """
         # Mock LLM response
         mock_recipe = {
-            "nombre": "Ensalada de Lentejas",
-            "ingredientes": "lentejas, tomate, pepino, aceite",
-            "pasos": "1. Cocinar lentejas. 2. Picar verduras. 3. Mezclar.",
-            "calorias": 320,
-            "proteinas": 18.5,
-            "carbohidratos": 45.0,
-            "grasas": 8.2,
-            "tiempo_min": 25,
-            "tipo": "almuerzo"
+            "name": "Lentil Salad",
+            "ingredients": "lentils, tomato, cucumber, oil",
+            "steps": "1. Cook lentils. 2. Chop vegetables. 3. Mix.",
+            "calories": 320,
+            "protein": 18.5,
+            "carbs": 45.0,
+            "fats": 8.2,
+            "prep_time_minutes": 25,
+            "meal_type": "lunch"
         }
 
         responses.add(
             responses.POST,
-            'http://localhost:1234/v1/chat/completions',
+            'http://localhost:11434/v1/chat/completions',
             json={'choices': [{'message': {'content': json.dumps(mock_recipe)}}]},
             status=200
         )
 
         data = {
-            'meal_type': 'almuerzo',
+            'meal_type': 'lunch',
             'available_time': 30,
-            'available_ingredients': 'lentejas, tomate'
+            'available_ingredients': 'lentils, tomato'
         }
         response = self.client.post(self.generate_url, data, format='json')
 
         assert response.status_code == status.HTTP_200_OK
-        assert 'nombre' in response.data
-        assert 'ingredientes' in response.data or 'ingredientes_texto' in response.data
-        assert 'calorias' in response.data
+        assert 'name' in response.data
+        assert 'ingredients' in response.data
+        assert 'calories' in response.data
 
     def test_recipe_generation_requires_meal_type(self):
         """
@@ -92,7 +92,7 @@ class TestRecipeGeneration:
         AC: Form includes numeric input for available_time.
         """
         data = {
-            'meal_type': 'desayuno'
+            'meal_type': 'breakfast'
         }
         response = self.client.post(self.generate_url, data, format='json')
 
@@ -106,15 +106,15 @@ class TestRecipeGeneration:
         with patch('httpx.post') as mock_post:
             mock_response = Mock()
             mock_recipe = {
-                "nombre": "Test Recipe",
-                "ingredientes": "test ingredients",
-                "pasos": "1. Test step",
-                "calorias": 300,
-                "proteinas": 15.0,
-                "carbohidratos": 40.0,
-                "grasas": 10.0,
-                "tiempo_min": 20,
-                "tipo": "desayuno"
+                "name": "Test Recipe",
+                "ingredients": "test ingredients",
+                "steps": "1. Test step",
+                "calories": 300,
+                "protein": 15.0,
+                "carbs": 40.0,
+                "fats": 10.0,
+                "prep_time_minutes": 20,
+                "meal_type": "breakfast"
             }
             mock_response.json.return_value = {
                 'choices': [{'message': {'content': json.dumps(mock_recipe)}}]
@@ -123,7 +123,7 @@ class TestRecipeGeneration:
             mock_post.return_value = mock_response
 
             data = {
-                'meal_type': 'desayuno',
+                'meal_type': 'breakfast',
                 'available_time': 20
             }
             response = self.client.post(self.generate_url, data, format='json')
@@ -139,7 +139,7 @@ class TestRecipeGeneration:
     def test_recipe_generation_validates_meal_type_choices(self):
         """
         Test that meal_type must be one of the valid choices.
-        AC: Dropdown has options: desayuno, almuerzo, cena, snack.
+        AC: Dropdown has options: breakfast, lunch, dinner, snack.
         """
         data = {
             'meal_type': 'invalid_meal_type',
@@ -158,32 +158,32 @@ class TestRecipeGeneration:
         # First call returns malformed JSON
         responses.add(
             responses.POST,
-            'http://localhost:1234/v1/chat/completions',
+            'http://localhost:11434/v1/chat/completions',
             json={'choices': [{'message': {'content': 'This is not valid JSON'}}]},
             status=200
         )
 
         # Second call (retry) returns valid JSON
         valid_recipe = {
-            "nombre": "Retry Recipe",
-            "ingredientes": "test",
-            "pasos": "1. Test",
-            "calorias": 300,
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "desayuno"
+            "name": "Retry Recipe",
+            "ingredients": "test",
+            "steps": "1. Test",
+            "calories": 300,
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "breakfast"
         }
         responses.add(
             responses.POST,
-            'http://localhost:1234/v1/chat/completions',
+            'http://localhost:11434/v1/chat/completions',
             json={'choices': [{'message': {'content': json.dumps(valid_recipe)}}]},
             status=200
         )
 
         data = {
-            'meal_type': 'desayuno',
+            'meal_type': 'breakfast',
             'available_time': 20
         }
         response = self.client.post(self.generate_url, data, format='json')
@@ -203,13 +203,13 @@ class TestRecipeGeneration:
         for _ in range(2):
             responses.add(
                 responses.POST,
-                'http://localhost:1234/v1/chat/completions',
+                'http://localhost:11434/v1/chat/completions',
                 json={'choices': [{'message': {'content': 'Invalid JSON'}}]},
                 status=200
             )
 
         data = {
-            'meal_type': 'cena',
+            'meal_type': 'dinner',
             'available_time': 30
         }
         response = self.client.post(self.generate_url, data, format='json')
@@ -225,7 +225,7 @@ class TestRecipeGeneration:
         """
         self.client.credentials()  # Remove authentication
         data = {
-            'meal_type': 'desayuno',
+            'meal_type': 'breakfast',
             'available_time': 20
         }
         response = self.client.post(self.generate_url, data, format='json')
@@ -240,15 +240,15 @@ class TestRecipeGeneration:
         with patch('httpx.post') as mock_post:
             mock_response = Mock()
             mock_recipe = {
-                "nombre": "Test Recipe",
-                "ingredientes": "any ingredients",
-                "pasos": "1. Cook",
-                "calorias": 300,
-                "proteinas": 15.0,
-                "carbohidratos": 40.0,
-                "grasas": 10.0,
-                "tiempo_min": 20,
-                "tipo": "snack"
+                "name": "Test Recipe",
+                "ingredients": "any ingredients",
+                "steps": "1. Cook",
+                "calories": 300,
+                "protein": 15.0,
+                "carbs": 40.0,
+                "fats": 10.0,
+                "prep_time_minutes": 20,
+                "meal_type": "snack"
             }
             mock_response.json.return_value = {
                 'choices': [{'message': {'content': json.dumps(mock_recipe)}}]
@@ -272,33 +272,33 @@ class TestRecipeGeneration:
         AC: System sends request with model "llama3:8b" and temperature 0.4.
         """
         mock_recipe = {
-            "nombre": "Test",
-            "ingredientes": "test",
-            "pasos": "1. Test",
-            "calorias": 300,
-            "proteinas": 15.0,
-            "carbohidratos": 40.0,
-            "grasas": 10.0,
-            "tiempo_min": 20,
-            "tipo": "almuerzo"
+            "name": "Test",
+            "ingredients": "test",
+            "steps": "1. Test",
+            "calories": 300,
+            "protein": 15.0,
+            "carbs": 40.0,
+            "fats": 10.0,
+            "prep_time_minutes": 20,
+            "meal_type": "lunch"
         }
 
         def request_callback(request):
             payload = json.loads(request.body)
             # Verify model and temperature
-            assert payload.get('model') == 'llama3:8b'
+            assert payload.get('model') == 'qwen3:4b'
             assert payload.get('temperature') == 0.4
             return (200, {}, json.dumps({'choices': [{'message': {'content': json.dumps(mock_recipe)}}]}))
 
         responses.add_callback(
             responses.POST,
-            'http://localhost:1234/v1/chat/completions',
+            'http://localhost:11434/v1/chat/completions',
             callback=request_callback,
             content_type='application/json'
         )
 
         data = {
-            'meal_type': 'almuerzo',
+            'meal_type': 'lunch',
             'available_time': 30
         }
         response = self.client.post(self.generate_url, data, format='json')
