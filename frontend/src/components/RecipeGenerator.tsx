@@ -71,13 +71,25 @@ export default function RecipeGenerator() {
   const formatInstructions = (steps: string) => {
     if (!steps) return []
 
-    // Split by periods followed by space or end of string, or by newlines
-    const splitSteps = steps
-      .split(/\.\s+|\n+/)
-      .map(step => step.trim())
-      .filter(step => step.length > 0)
+    // First, try to split by numbered patterns like "1. ", "2. ", etc.
+    let splitSteps = steps.split(/\d+\.\s+/).filter(s => s.trim().length > 0)
 
+    // If that didn't work (no numbered pattern found), try splitting by newlines
+    if (splitSteps.length <= 1) {
+      splitSteps = steps.split(/\n+/).filter(s => s.trim().length > 0)
+    }
+
+    // If still just one item, try splitting by sentence-ending patterns
+    if (splitSteps.length <= 1) {
+      splitSteps = steps.split(/\.\s+(?=[A-Z])/).filter(s => s.trim().length > 0)
+    }
+
+    // Clean up each step: remove leading numbers, trim, remove trailing periods
     return splitSteps
+      .map(step => step.trim())
+      .map(step => step.replace(/^\d+[\.)]\s*/, '')) // Remove leading "1. " or "1) "
+      .map(step => step.replace(/\.$/, '')) // Remove trailing period
+      .filter(step => step.length > 0)
   }
 
   return (
