@@ -38,6 +38,5 @@ class RecetaSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a new recipe and link it to the current user"""
-        # User is passed from the view context
-        user = self.context['request'].user
-        return Receta.objects.create(user=user, **validated_data)
+        # User is passed from the view's perform_create method
+        return Receta.objects.create(**validated_data)
