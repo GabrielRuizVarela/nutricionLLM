@@ -15,6 +15,7 @@ class Profile(models.Model):
     # === PERSONAL INFORMATION ===
     age = models.IntegerField(
         null=True,
+<<<<<<< HEAD
         blank=True,
         help_text="Age in years"
     )
@@ -63,6 +64,66 @@ class Profile(models.Model):
         blank=True,
         help_text="Primary nutritional goal"
     )
+=======
+        blank=True,
+        help_text="Age in years"
+    )
+    weight_kg = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Weight in kilograms"
+    )
+    height_cm = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="Height in centimeters"
+    )
+
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ]
+    gender = models.CharField(
+        max_length=20,
+        choices=GENDER_CHOICES,
+        blank=True,
+        default='',
+        help_text="Gender"
+    )
+
+    ACTIVITY_LEVEL_CHOICES = [
+        ('sedentary', 'Sedentary (little or no exercise)'),
+        ('lightly_active', 'Lightly Active (exercise 1-3 days/week)'),
+        ('moderately_active', 'Moderately Active (exercise 3-5 days/week)'),
+        ('very_active', 'Very Active (exercise 6-7 days/week)'),
+        ('extremely_active', 'Extremely Active (physical job or training twice/day)'),
+    ]
+    activity_level = models.CharField(
+        max_length=20,
+        choices=ACTIVITY_LEVEL_CHOICES,
+        blank=True,
+        default='',
+        help_text="Activity level"
+    )
+
+    # === DIETARY INFORMATION ===
+    GOAL_CHOICES = [
+        ('lose_weight', 'Lose Weight'),
+        ('gain_weight', 'Gain Weight'),
+        ('maintain_weight', 'Maintain Weight'),
+        ('gain_muscle', 'Gain Muscle'),
+        ('improve_health', 'Improve Health'),
+    ]
+    goal = models.CharField(
+        max_length=20,
+        choices=GOAL_CHOICES,
+        blank=True,
+        default='',
+        help_text="Primary nutritional goal"
+    )
+>>>>>>> 146c2b18 (feat: general functionalities changes)
 
     dietary_preferences = models.TextField(
         blank=True,

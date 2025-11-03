@@ -126,6 +126,7 @@ class LLMService:
         preferred_ingredients: str = ""
     ) -> str:
         """Build the initial prompt for recipe generation with comprehensive profile data"""
+<<<<<<< HEAD
         base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format.
 
 IMPORTANT: You MUST include ALL of these fields in your JSON response:
@@ -141,6 +142,19 @@ IMPORTANT: You MUST include ALL of these fields in your JSON response:
   "meal_type": "breakfast"
 }
 
+=======
+        base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format with EXACTLY these fields:
+- name (string)
+- ingredients (string, comma-separated list)
+- steps (string, numbered steps separated by periods)
+- calories (int)
+- protein (float in grams)
+- carbs (float in grams)
+- fats (float in grams)
+- prep_time_minutes (int)
+- meal_type (string: breakfast, lunch, dinner, or snack)
+
+>>>>>>> 146c2b18 (feat: general functionalities changes)
 User context and requirements:"""
 
         prompt_parts = [base_prompt]
