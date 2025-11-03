@@ -47,6 +47,18 @@ export default function Navbar() {
                 >
                   Recipes
                 </Link>
+                <Link
+                  to="/meal-planner"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Meal Planner
+                </Link>
+                <Link
+                  to="/food-log"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Food Diary
+                </Link>
                 <ThemeToggle />
                 <Button
                   variant="outline"

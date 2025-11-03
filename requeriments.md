@@ -176,3 +176,164 @@
   - `tiempo_min` (PositiveIntegerField)
   - `tipo` (CharField with choices)
   - `user` (ForeignKey to User)
+
+
+Story 1 – Log Daily Foods & Track Macros
+
+Acceptance Criteria
+
+User can search and select foods from a USDA-backed database.
+
+User can add or remove foods from their daily log.
+
+Each food entry displays:
+
+Name
+
+Quantity (grams or units)
+
+Auto-calculated macros (calories, protein, carbs, fats)
+
+Daily totals update in real time as foods are added/removed.
+
+Logs are stored per date and can be viewed/edited for past or future dates.
+
+Data persists across sessions (no loss on refresh).
+
+Story 2 – Set & Adjust Nutrition Goals
+
+Acceptance Criteria
+
+User can set or edit daily targets for calories, protein, carbs, and fats in their profile.
+
+Default goals are auto-calculated from user stats (age, weight, goal type).
+
+Dashboard shows progress bars or ratios (e.g., “Protein: 90g / 120g”).
+
+Goals apply to all future dates unless explicitly overridden for a specific day.
+
+Updated goals immediately reflect in macro tracking displays.
+
+Story 3 – Create a Blank Weekly Meal Plan
+
+Acceptance Criteria
+
+System displays a 7×3 grid (days: Mon–Sun × meals: breakfast, lunch, dinner).
+
+Each cell shows an “Add meal” button when empty.
+
+User can navigate to past or future weeks.
+
+Week navigation updates the grid and data persistently.
+
+Grid layout remains responsive across desktop and mobile.
+
+Story 4 – Assign Recipes to Meal Slots
+
+Acceptance Criteria
+
+Clicking “Add meal” opens a modal or panel offering:
+
+User’s saved recipes, and
+
+A “Generate new recipe” option (via LLM).
+
+Assigned meals display:
+
+Recipe name
+
+Calories
+
+Prep time
+
+Assigning a recipe updates that day’s macro totals automatically.
+
+Assigned recipes are persisted per week/day/meal slot.
+
+Reassigning or removing meals immediately updates displayed macros.
+
+Story 5 – Manage Preferred & Available Ingredients
+
+Acceptance Criteria
+
+User profile includes two editable lists:
+
+Preferred ingredients
+
+Available ingredients
+
+Both lists support:
+
+Tag or comma-separated entry
+
+Add/remove/edit actions
+
+Recipe generation prompts always include preferred ingredients.
+
+Recipe generation prioritizes available ingredients.
+
+LLM prompts explicitly include:
+
+“Use these preferred ingredients: [preferred_list]”
+
+“Prioritize these available ingredients: [available_list]”
+
+Lists persist across sessions and can be updated anytime.
+
+Story 6 – Auto-Fill Plan Based on Ingredients
+
+Acceptance Criteria
+
+Clicking “Auto-fill week” triggers generation of 21 meals (7 days × 3 meals).
+
+Each generated meal uses:
+
+User’s nutrition goals (to fill remaining macros)
+
+Preferred and available ingredient lists
+
+Meal type context (e.g., breakfast vs. dinner)
+
+Generation failures mark the slot as empty with error indicator.
+
+Successfully generated meals are saved to the recipe library.
+
+The grid updates to show new meals immediately after generation.
+
+User can edit or replace any auto-filled meal manually.
+
+Story 7 – Generate Shopping List from Plan
+
+Acceptance Criteria
+
+System aggregates all ingredients from assigned recipes for the selected week.
+
+Ingredients are grouped by category (e.g., produce, dairy, pantry).
+
+Quantities are summed and normalized (e.g., “chicken breast: 1200g”).
+
+Items already in Available ingredients list are marked as “✅ In pantry.”
+
+User can export the shopping list (PDF, CSV, or text).
+
+Any changes to the plan auto-refresh the list.
+
+Story 8 – Adjust Plan Based on Leftovers
+
+Acceptance Criteria
+
+When adding a meal, user can select “Use leftovers from [Day]”.
+
+Leftover meals:
+
+Show a reuse icon
+
+Contribute no new ingredients to the shopping list
+
+Still count macros toward daily totals
+
+Selecting leftovers links to the original recipe for quick reference.
+
+Removing or changing the original recipe updates linked leftover meals.
+
+Leftover status persists across sessions and exports correctly to the plan view.

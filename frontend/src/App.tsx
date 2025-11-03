@@ -8,6 +8,8 @@ import LoginPage from '@/pages/LoginPage'
 import ProfilePage from '@/pages/ProfilePage'
 import GenerateRecipePage from '@/pages/GenerateRecipePage'
 import RecipesPage from '@/pages/RecipesPage'
+import MealPlannerPage from '@/pages/MealPlannerPage'
+import FoodLogPage from '@/pages/FoodLogPage'
 
 function App() {
   return (
@@ -50,6 +52,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RecipesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/meal-planner"
+              element={
+                <ProtectedRoute>
+                  <MealPlannerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/food-log"
+              element={
+                <ProtectedRoute>
+                  <FoodLogPage />
                 </ProtectedRoute>
               }
             />

@@ -76,8 +76,44 @@ class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
 
+    # Calculated fields
+    bmr = serializers.SerializerMethodField(read_only=True)
+    tdee = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Profile
-        fields = ('id', 'username', 'email', 'goal', 'dietary_preferences',
-                  'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        fields = (
+            # User info
+            'id', 'username', 'email',
+
+            # Personal Information
+            'age', 'weight_kg', 'height_cm', 'gender', 'activity_level',
+
+            # Dietary Information
+            'goal', 'dietary_preferences', 'allergies', 'dislikes',
+
+            # Recipe Preferences
+            'cuisine_preferences', 'cooking_skill_level', 'spice_preference',
+
+            # Ingredient Management
+            'preferred_ingredients', 'available_ingredients',
+
+            # Nutritional Targets
+            'daily_calorie_target', 'daily_protein_target',
+            'daily_carbs_target', 'daily_fats_target',
+
+            # Calculated fields
+            'bmr', 'tdee',
+
+            # Timestamps
+            'created_at', 'updated_at'
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at', 'bmr', 'tdee')
+
+    def get_bmr(self, obj):
+        """Get calculated BMR if personal info is available"""
+        return obj.calculate_bmr()
+
+    def get_tdee(self, obj):
+        """Get calculated TDEE if personal info and activity level are available"""
+        return obj.calculate_tdee()

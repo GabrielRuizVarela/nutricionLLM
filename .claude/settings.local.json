@@ -1,6 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest recipes/ users/ --ignore=recipes/test_llm_service.py -q --tb=line)",
+      "Bash(python -m pytest:*)",
+      "Bash(cat:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "shadcn"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

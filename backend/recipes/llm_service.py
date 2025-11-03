@@ -23,17 +23,39 @@ class LLMService:
         available_time: int,
         goal: str = "",
         dietary_preferences: str = "",
-        available_ingredients: str = ""
+        available_ingredients: str = "",
+        # New profile fields
+        allergies: str = "",
+        dislikes: str = "",
+        cuisine_preferences: str = "",
+        cooking_skill_level: str = "",
+        spice_preference: str = "",
+        daily_calorie_target: Optional[int] = None,
+        daily_protein_target: Optional[int] = None,
+        daily_carbs_target: Optional[int] = None,
+        daily_fats_target: Optional[int] = None,
+        # Ingredient management
+        preferred_ingredients: str = "",
     ) -> Dict:
         """
-        Generate a recipe using LLM Studio.
+        Generate a recipe using LLM Studio with comprehensive user profile data.
 
         Args:
-            meal_type: Type of meal (desayuno, almuerzo, cena, snack)
+            meal_type: Type of meal (breakfast, lunch, dinner, snack)
             available_time: Available time in minutes
             goal: User's nutritional goal
             dietary_preferences: User's dietary preferences
-            available_ingredients: Available ingredients (optional)
+            available_ingredients: Ingredients currently in pantry
+            allergies: Food allergies to avoid
+            dislikes: Disliked ingredients to avoid
+            cuisine_preferences: Preferred cuisines
+            cooking_skill_level: User's cooking skill (beginner, intermediate, advanced)
+            spice_preference: Spice level preference (mild, medium, spicy)
+            daily_calorie_target: Target calories per meal
+            daily_protein_target: Target protein per meal
+            daily_carbs_target: Target carbs per meal
+            daily_fats_target: Target fats per meal
+            preferred_ingredients: Ingredients user likes to use regularly
 
         Returns:
             Dictionary containing recipe data
@@ -47,7 +69,17 @@ class LLMService:
             available_time=available_time,
             goal=goal,
             dietary_preferences=dietary_preferences,
-            available_ingredients=available_ingredients
+            available_ingredients=available_ingredients,
+            allergies=allergies,
+            dislikes=dislikes,
+            cuisine_preferences=cuisine_preferences,
+            cooking_skill_level=cooking_skill_level,
+            spice_preference=spice_preference,
+            daily_calorie_target=daily_calorie_target,
+            daily_protein_target=daily_protein_target,
+            daily_carbs_target=daily_carbs_target,
+            daily_fats_target=daily_fats_target,
+            preferred_ingredients=preferred_ingredients
         )
 
         # Try to generate recipe
@@ -81,9 +113,19 @@ class LLMService:
         available_time: int,
         goal: str,
         dietary_preferences: str,
-        available_ingredients: str
+        available_ingredients: str,
+        allergies: str = "",
+        dislikes: str = "",
+        cuisine_preferences: str = "",
+        cooking_skill_level: str = "",
+        spice_preference: str = "",
+        daily_calorie_target: Optional[int] = None,
+        daily_protein_target: Optional[int] = None,
+        daily_carbs_target: Optional[int] = None,
+        daily_fats_target: Optional[int] = None,
+        preferred_ingredients: str = ""
     ) -> str:
-        """Build the initial prompt for recipe generation"""
+        """Build the initial prompt for recipe generation with comprehensive profile data"""
         base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format with EXACTLY these fields:
 - name (string)
 - ingredients (string, comma-separated list)
@@ -95,21 +137,68 @@ class LLMService:
 - prep_time_minutes (int)
 - meal_type (string: breakfast, lunch, dinner, or snack)
 
-User context:"""
+User context and requirements:"""
 
         prompt_parts = [base_prompt]
 
+        # Primary meal requirements
+        prompt_parts.append(f"- Meal type: {meal_type}")
+        prompt_parts.append(f"- Available time: {available_time} minutes")
+
+        # Safety: Allergies (CRITICAL - must avoid)
+        if allergies:
+            prompt_parts.append(f"- ⚠️  ALLERGIES (MUST AVOID): {allergies}")
+
+        # User preferences
         if goal:
             prompt_parts.append(f"- Goal: {goal}")
 
         if dietary_preferences:
             prompt_parts.append(f"- Dietary preferences: {dietary_preferences}")
 
-        prompt_parts.append(f"- Meal type: {meal_type}")
-        prompt_parts.append(f"- Available time: {available_time} minutes")
+        if dislikes:
+            prompt_parts.append(f"- Dislikes (avoid if possible): {dislikes}")
+
+        # Recipe style preferences
+        if cuisine_preferences:
+            prompt_parts.append(f"- Preferred cuisines: {cuisine_preferences}")
+
+        if cooking_skill_level:
+            skill_hints = {
+                'beginner': 'simple techniques, minimal steps, common ingredients',
+                'intermediate': 'moderate complexity, some specialized techniques allowed',
+                'advanced': 'complex techniques welcome, gourmet ingredients acceptable'
+            }
+            hint = skill_hints.get(cooking_skill_level, '')
+            prompt_parts.append(f"- Cooking skill level: {cooking_skill_level} ({hint})")
+
+        if spice_preference:
+            prompt_parts.append(f"- Spice preference: {spice_preference}")
+
+        # Nutritional targets
+        if daily_calorie_target:
+            # Assume 3 meals per day, so divide by 3 for per-meal target
+            target_per_meal = daily_calorie_target // 3
+            prompt_parts.append(f"- Target calories for this meal: approximately {target_per_meal} kcal")
+
+        if daily_protein_target:
+            target_per_meal = daily_protein_target // 3
+            prompt_parts.append(f"- Target protein for this meal: approximately {target_per_meal}g")
+
+        if daily_carbs_target:
+            target_per_meal = daily_carbs_target // 3
+            prompt_parts.append(f"- Target carbs for this meal: approximately {target_per_meal}g")
+
+        if daily_fats_target:
+            target_per_meal = daily_fats_target // 3
+            prompt_parts.append(f"- Target fats for this meal: approximately {target_per_meal}g")
+
+        # Ingredient preferences and availability
+        if preferred_ingredients:
+            prompt_parts.append(f"- Preferred ingredients (use these when possible): {preferred_ingredients}")
 
         if available_ingredients:
-            prompt_parts.append(f"- Available ingredients: {available_ingredients}")
+            prompt_parts.append(f"- Available ingredients (prioritize these): {available_ingredients}")
 
         prompt_parts.append("\nRespond ONLY with the JSON object. No additional text.")
 
