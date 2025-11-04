@@ -268,16 +268,24 @@ class TestNutritionalTargetFields:
         user = User.objects.create_user(username='test', email='test@test.com', password='test123')
         client.force_authenticate(user=user)
 
-        response = client.get('/api/profile/')
-
-        # Default targets might be null
-        # Setting them to null should work
+        # First set some values
         response = client.patch('/api/profile/', {
-            'daily_calorie_target': None,
-            'daily_protein_target': None
+            'daily_calorie_target': 2000,
+            'daily_protein_target': 150
+        })
+        assert response.status_code == status.HTTP_200_OK
+
+        # Now clear them by setting to empty string (which converts to null)
+        response = client.patch('/api/profile/', {
+            'daily_calorie_target': '',
+            'daily_protein_target': ''
         })
 
         assert response.status_code == status.HTTP_200_OK
+        # Verify they were cleared (null in DB)
+        user.profile.refresh_from_db()
+        assert user.profile.daily_calorie_target is None
+        assert user.profile.daily_protein_target is None
 
 
 class TestCompleteProfileUpdate:

@@ -201,7 +201,7 @@ class TestRecipeList:
             carbs=40.0,
             fats=10.0,
             prep_time_minutes=20,
-            tipo="breakfast"
+            meal_type="breakfast"
         )
         Receta.objects.create(
             user=self.test_user,
@@ -213,7 +213,7 @@ class TestRecipeList:
             carbs=50.0,
             fats=15.0,
             prep_time_minutes=30,
-            tipo="lunch"
+            meal_type="lunch"
         )
         # Recipe for other user
         Receta.objects.create(
@@ -226,7 +226,7 @@ class TestRecipeList:
             carbs=45.0,
             fats=12.0,
             prep_time_minutes=25,
-            tipo="dinner"
+            meal_type="dinner"
         )
 
     def test_get_user_recipes_list(self):
@@ -282,7 +282,7 @@ class TestRecipeList:
 
         for recipe in results:
             assert 'name' in recipe
-            assert 'tipo' in recipe
+            assert 'meal_type' in recipe
             assert 'created_at' in recipe
 
     def test_get_recipe_detail(self):

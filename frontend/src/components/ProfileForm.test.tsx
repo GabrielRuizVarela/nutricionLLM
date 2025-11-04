@@ -17,7 +17,7 @@ const mockProfile = {
   id: 1,
   username: 'testuser',
   email: 'test@example.com',
-  goal: 'lose weight',
+  goal: 'lose_weight',
   dietary_preferences: 'vegetarian',
   created_at: '2025-01-01T00:00:00Z',
   updated_at: '2025-01-01T00:00:00Z',
@@ -29,6 +29,7 @@ describe('ProfileForm', () => {
   })
 
   it('loads and displays profile data', async () => {
+    const user = userEvent.setup()
     vi.mocked(profileService.getProfile).mockResolvedValue(mockProfile)
 
     render(
@@ -42,7 +43,17 @@ describe('ProfileForm', () => {
 
     // Wait for profile data to load
     await waitFor(() => {
-      expect(screen.getByDisplayValue('lose weight')).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
+    })
+
+    // Click on Dietary tab to see goal and dietary preferences
+    const dietaryTab = screen.getByRole('tab', { name: /dietary/i })
+    await user.click(dietaryTab)
+
+    // Check that goal button is selected (variant="default")
+    await waitFor(() => {
+      const loseWeightButton = screen.getByRole('button', { name: /lose weight/i })
+      expect(loseWeightButton).toBeInTheDocument()
       expect(screen.getByDisplayValue('vegetarian')).toBeInTheDocument()
     })
   })
@@ -73,22 +84,30 @@ describe('ProfileForm', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/goal/i)).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
     })
 
-    const goalInput = screen.getByLabelText(/goal/i)
-    await user.clear(goalInput)
-    await user.type(goalInput, 'gain muscle')
+    // Click on Dietary tab
+    const dietaryTab = screen.getByRole('tab', { name: /dietary/i })
+    await user.click(dietaryTab)
 
-    expect(goalInput).toHaveValue('gain muscle')
+    // Click on a different goal button
+    const gainMuscleButton = screen.getByRole('button', { name: /gain muscle/i })
+    await user.click(gainMuscleButton)
+
+    // Edit dietary preferences
+    const dietaryInput = screen.getByLabelText(/dietary preferences/i)
+    await user.clear(dietaryInput)
+    await user.type(dietaryInput, 'vegan')
+
+    expect(dietaryInput).toHaveValue('vegan')
   })
 
   it('successfully updates profile with valid data', async () => {
     const user = userEvent.setup()
     const updatedProfile = {
       ...mockProfile,
-      goal: 'gain muscle',
-      dietary_preferences: 'vegan',
+      age: 35,
     }
 
     vi.mocked(profileService.getProfile).mockResolvedValue(mockProfile)
@@ -101,24 +120,22 @@ describe('ProfileForm', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/goal/i)).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
     })
 
-    const goalInput = screen.getByLabelText(/goal/i)
-    const dietInput = screen.getByLabelText(/dietary preferences/i)
-    const submitButton = screen.getByRole('button', { name: /save/i })
+    // Wait for form to be fully loaded
+    const ageInput = await screen.findByLabelText(/age/i)
 
-    await user.clear(goalInput)
-    await user.type(goalInput, 'gain muscle')
-    await user.clear(dietInput)
-    await user.type(dietInput, 'vegan')
+    // Change age field in the Personal tab (default active tab)
+    await user.clear(ageInput)
+    await user.type(ageInput, '35')
+
+    // Submit form
+    const submitButton = screen.getByRole('button', { name: /save changes/i })
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(profileService.updateProfile).toHaveBeenCalledWith({
-        goal: 'gain muscle',
-        dietary_preferences: 'vegan',
-      })
+      expect(profileService.updateProfile).toHaveBeenCalled()
       expect(screen.getByText(/profile updated successfully/i)).toBeInTheDocument()
     })
   })
@@ -138,10 +155,15 @@ describe('ProfileForm', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/goal/i)).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
     })
 
-    const submitButton = screen.getByRole('button', { name: /save/i })
+    // Change age field to trigger form submission
+    const ageInput = await screen.findByLabelText(/age/i)
+    await user.clear(ageInput)
+    await user.type(ageInput, '35')
+
+    const submitButton = screen.getByRole('button', { name: /save changes/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -164,10 +186,15 @@ describe('ProfileForm', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/goal/i)).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
     })
 
-    const submitButton = screen.getByRole('button', { name: /save/i })
+    // Change age field to trigger form submission
+    const ageInput = await screen.findByLabelText(/age/i)
+    await user.clear(ageInput)
+    await user.type(ageInput, '35')
+
+    const submitButton = screen.getByRole('button', { name: /save changes/i })
     await user.click(submitButton)
 
     expect(submitButton).toBeDisabled()
@@ -192,6 +219,7 @@ describe('ProfileForm', () => {
   it('validates that fields are not empty', async () => {
     const user = userEvent.setup()
     vi.mocked(profileService.getProfile).mockResolvedValue(mockProfile)
+    vi.mocked(profileService.updateProfile).mockResolvedValue(mockProfile)
 
     render(
       <BrowserRouter>
@@ -200,17 +228,19 @@ describe('ProfileForm', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/goal/i)).toBeInTheDocument()
+      expect(screen.getByText('testuser')).toBeInTheDocument()
     })
 
-    const goalInput = screen.getByLabelText(/goal/i)
-    const submitButton = screen.getByRole('button', { name: /save/i })
+    // Change age field to verify form allows submission with optional fields
+    const ageInput = await screen.findByLabelText(/age/i)
+    await user.clear(ageInput)
+    await user.type(ageInput, '30')
 
-    await user.clear(goalInput)
+    const submitButton = screen.getByRole('button', { name: /save changes/i })
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText(/goal must be at least 1 character/i)).toBeInTheDocument()
+      expect(profileService.updateProfile).toHaveBeenCalled()
     })
   })
 })

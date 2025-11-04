@@ -50,9 +50,10 @@ describe('WeeklyMealPlanner', () => {
         expect(screen.getByText('Weekly Meal Plan')).toBeInTheDocument()
       })
 
-      expect(screen.getByText(/Week of/)).toBeInTheDocument()
-      expect(screen.getByText(mockMealPlan.week_start_date)).toBeInTheDocument()
-      expect(screen.getByText(mockMealPlan.week_end_date)).toBeInTheDocument()
+      const weekText = screen.getByText(/Week of/)
+      expect(weekText).toBeInTheDocument()
+      expect(weekText).toHaveTextContent(mockMealPlan.week_start_date)
+      expect(weekText).toHaveTextContent(mockMealPlan.week_end_date)
     })
 
     it('displays all 7 days of the week', async () => {
@@ -147,13 +148,15 @@ describe('WeeklyMealPlanner', () => {
       renderWithProviders(<WeeklyMealPlanner />)
 
       await waitFor(() => {
-        expect(screen.getByText('2024-01-08')).toBeInTheDocument()
+        const weekText = screen.getByText(/Week of/)
+        expect(weekText).toHaveTextContent('2024-01-08')
       })
 
       await user.click(screen.getByRole('button', { name: /previous week/i }))
 
       await waitFor(() => {
-        expect(screen.getByText('2024-01-01')).toBeInTheDocument()
+        const weekText = screen.getByText(/Week of/)
+        expect(weekText).toHaveTextContent('2024-01-01')
       })
     })
 
@@ -169,13 +172,15 @@ describe('WeeklyMealPlanner', () => {
       renderWithProviders(<WeeklyMealPlanner />)
 
       await waitFor(() => {
-        expect(screen.getByText('2024-01-01')).toBeInTheDocument()
+        const weekText = screen.getByText(/Week of/)
+        expect(weekText).toHaveTextContent('2024-01-01')
       })
 
       await user.click(screen.getByRole('button', { name: /next week/i }))
 
       await waitFor(() => {
-        expect(screen.getByText('2024-01-08')).toBeInTheDocument()
+        const weekText = screen.getByText(/Week of/)
+        expect(weekText).toHaveTextContent('2024-01-08')
       })
     })
 
@@ -191,7 +196,8 @@ describe('WeeklyMealPlanner', () => {
       renderWithProviders(<WeeklyMealPlanner />)
 
       await waitFor(() => {
-        expect(screen.getByText('2024-12-01')).toBeInTheDocument()
+        const weekText = screen.getByText(/Week of/)
+        expect(weekText).toHaveTextContent('2024-12-01')
       })
 
       await user.click(screen.getByRole('button', { name: /current week/i }))
@@ -221,9 +227,8 @@ describe('WeeklyMealPlanner', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Grilled Chicken')).toBeInTheDocument()
+        expect(screen.getAllByText(/450 kcal/).length).toBeGreaterThan(0) // calories displayed
       })
-
-      expect(screen.getByText(/450/)).toBeInTheDocument() // calories
     })
 
     it('shows empty meal slots for unassigned meals', async () => {

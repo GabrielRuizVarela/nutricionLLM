@@ -14,15 +14,15 @@ vi.mock('@/services/recipes', () => ({
 }))
 
 const mockGeneratedRecipe = {
-  nombre: 'Ensalada de Lentejas',
-  ingredientes_texto: '1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon',
-  pasos_texto: '1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.',
-  calorias: 320,
-  proteinas: 18.5,
-  carbohidratos: 45.0,
-  grasas: 8.2,
-  tiempo_min: 10,
-  tipo: 'almuerzo',
+  name: 'Ensalada de Lentejas',
+  ingredients: '1 cup cooked lentils, 1 cucumber, 2 tomatoes, olive oil, lemon',
+  instructions: '1. Drain lentils. 2. Chop vegetables. 3. Mix with oil and lemon.',
+  calories: 320,
+  protein: 18.5,
+  carbs: 45.0,
+  fats: 8.2,
+  prep_time_minutes: 10,
+  meal_type: 'lunch',
 }
 
 describe('RecipeGenerator', () => {
@@ -37,8 +37,10 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    expect(screen.getByLabelText(/meal type/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/available time/i)).toBeInTheDocument()
+    expect(screen.getByText(/meal type/i)).toBeInTheDocument()
+    expect(screen.getByText(/available time/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /breakfast/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /15 min/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /generate recipe/i })).toBeInTheDocument()
   })
 
@@ -68,10 +70,16 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    // Click 60+ min button to show custom time input
+    const customTimeButton = screen.getByRole('button', { name: /60\+ min/i })
+    await user.click(customTimeButton)
 
+    // Find the custom time input and enter invalid value
+    const timeInput = screen.getByPlaceholderText(/enter minutes/i)
+    await user.clear(timeInput)
     await user.type(timeInput, '0')
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -90,17 +98,20 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    // Click Lunch button for meal type
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    // Click 15 min button for time
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     await waitFor(() => {
       expect(recipeService.generateRecipe).toHaveBeenCalledWith({
-        meal_type: 'almuerzo',
+        meal_type: 'lunch',
         available_time: 15,
       })
     })
@@ -117,18 +128,19 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     await waitFor(() => {
       expect(screen.getByText('Ensalada de Lentejas')).toBeInTheDocument()
-      expect(screen.getByText(/320/)).toBeInTheDocument() // calories
-      expect(screen.getByText(/18.5/)).toBeInTheDocument() // protein
+      expect(screen.getAllByText(/320/).length).toBeGreaterThan(0) // calories
+      expect(screen.getAllByText(/18\.5/).length).toBeGreaterThan(0) // protein
     })
   })
 
@@ -145,12 +157,13 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     expect(screen.getByText(/generating/i)).toBeInTheDocument()
@@ -169,12 +182,13 @@ describe('RecipeGenerator', () => {
       </BrowserRouter>
     )
 
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -196,12 +210,13 @@ describe('RecipeGenerator', () => {
     )
 
     // Generate recipe first
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     // Wait for recipe to be displayed
@@ -232,12 +247,13 @@ describe('RecipeGenerator', () => {
     )
 
     // Generate recipe first
-    const mealTypeSelect = screen.getByLabelText(/meal type/i)
-    const timeInput = screen.getByLabelText(/available time/i)
-    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
+    const lunchButton = screen.getByRole('button', { name: /lunch/i })
+    await user.click(lunchButton)
 
-    await user.selectOptions(mealTypeSelect, 'almuerzo')
-    await user.type(timeInput, '15')
+    const time15Button = screen.getByRole('button', { name: /15 min/i })
+    await user.click(time15Button)
+
+    const submitButton = screen.getByRole('button', { name: /generate recipe/i })
     await user.click(submitButton)
 
     await waitFor(() => {

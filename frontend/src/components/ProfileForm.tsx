@@ -189,7 +189,7 @@ export default function ProfileForm() {
                   id="age"
                   type="number"
                   placeholder="e.g., 30"
-                  {...register('age', { valueAsNumber: true })}
+                  {...register('age', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.age && (
                   <p className="text-sm text-destructive">{errors.age.message}</p>
@@ -203,7 +203,7 @@ export default function ProfileForm() {
                   type="number"
                   step="0.1"
                   placeholder="e.g., 70"
-                  {...register('weight_kg', { valueAsNumber: true })}
+                  {...register('weight_kg', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.weight_kg && (
                   <p className="text-sm text-destructive">{errors.weight_kg.message}</p>
@@ -216,7 +216,7 @@ export default function ProfileForm() {
                   id="height_cm"
                   type="number"
                   placeholder="e.g., 175"
-                  {...register('height_cm', { valueAsNumber: true })}
+                  {...register('height_cm', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.height_cm && (
                   <p className="text-sm text-destructive">{errors.height_cm.message}</p>
@@ -496,7 +496,7 @@ export default function ProfileForm() {
                   id="daily_calorie_target"
                   type="number"
                   placeholder={profile?.tdee ? `e.g., ${profile.tdee}` : "e.g., 2000"}
-                  {...register('daily_calorie_target', { valueAsNumber: true })}
+                  {...register('daily_calorie_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.daily_calorie_target && (
                   <p className="text-sm text-destructive">{errors.daily_calorie_target.message}</p>
@@ -509,7 +509,7 @@ export default function ProfileForm() {
                   id="daily_protein_target"
                   type="number"
                   placeholder="e.g., 150"
-                  {...register('daily_protein_target', { valueAsNumber: true })}
+                  {...register('daily_protein_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.daily_protein_target && (
                   <p className="text-sm text-destructive">{errors.daily_protein_target.message}</p>
@@ -522,7 +522,7 @@ export default function ProfileForm() {
                   id="daily_carbs_target"
                   type="number"
                   placeholder="e.g., 200"
-                  {...register('daily_carbs_target', { valueAsNumber: true })}
+                  {...register('daily_carbs_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.daily_carbs_target && (
                   <p className="text-sm text-destructive">{errors.daily_carbs_target.message}</p>
@@ -535,7 +535,7 @@ export default function ProfileForm() {
                   id="daily_fats_target"
                   type="number"
                   placeholder="e.g., 65"
-                  {...register('daily_fats_target', { valueAsNumber: true })}
+                  {...register('daily_fats_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
                 />
                 {errors.daily_fats_target && (
                   <p className="text-sm text-destructive">{errors.daily_fats_target.message}</p>

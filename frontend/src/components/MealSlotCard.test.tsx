@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders, createMockMealSlot, createMockRecipe } from '@/test/utils'
 import MealSlotCard from './MealSlotCard'
@@ -259,7 +259,6 @@ describe('MealSlotCard', () => {
 
   describe('Clear Meal Functionality', () => {
     it('shows clear button on hover for filled slots', async () => {
-      const user = userEvent.setup()
       const recipe = createMockRecipe()
       const filledSlot = createMockMealSlot({
         recipe: recipe.id,
@@ -279,11 +278,11 @@ describe('MealSlotCard', () => {
       expect(card).toBeTruthy()
 
       if (card) {
-        // Hover over the card
-        await user.hover(card)
+        // Hover over the card using fireEvent
+        fireEvent.mouseEnter(card)
 
         // Clear button should be visible (×)
-        const clearButton = screen.queryByRole('button', { name: /×/i })
+        const clearButton = await screen.findByRole('button', { name: /×/i })
         expect(clearButton).toBeInTheDocument()
       }
     })
@@ -304,12 +303,13 @@ describe('MealSlotCard', () => {
         />
       )
 
-      // Hover to show clear button
+      // Hover to show clear button using fireEvent
       const card = container.querySelector('div[class*="border"]')
       if (card) {
-        await user.hover(card)
+        fireEvent.mouseEnter(card)
 
-        const clearButton = screen.getByRole('button', { name: /×/i })
+        // Wait for clear button to appear after hover
+        const clearButton = await screen.findByRole('button', { name: /×/i })
         await user.click(clearButton)
 
         expect(mockOnClearMeal).toHaveBeenCalledTimes(1)
@@ -446,7 +446,6 @@ describe('MealSlotCard', () => {
     })
 
     it('has accessible button for clearing meals', async () => {
-      const user = userEvent.setup()
       const recipe = createMockRecipe()
       const filledSlot = createMockMealSlot({
         recipe: recipe.id,
@@ -463,9 +462,9 @@ describe('MealSlotCard', () => {
 
       const card = container.querySelector('div[class*="border"]')
       if (card) {
-        await user.hover(card)
+        fireEvent.mouseEnter(card)
 
-        const clearButton = screen.getByRole('button', { name: /×/i })
+        const clearButton = await screen.findByRole('button', { name: /×/i })
         expect(clearButton).toBeInTheDocument()
         expect(clearButton).toBeEnabled()
       }

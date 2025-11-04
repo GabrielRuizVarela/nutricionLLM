@@ -59,18 +59,8 @@ class Profile(models.Model):
     )
 
     # === DIETARY INFORMATION ===
-    GOAL_CHOICES = [
-        ('lose_weight', 'Lose Weight'),
-        ('gain_weight', 'Gain Weight'),
-        ('maintain_weight', 'Maintain Weight'),
-        ('gain_muscle', 'Gain Muscle'),
-        ('improve_health', 'Improve Health'),
-    ]
-    goal = models.CharField(
-        max_length=20,
-        choices=GOAL_CHOICES,
+    goal = models.TextField(
         blank=True,
-        default='',
         help_text="Primary nutritional goal"
     )
 

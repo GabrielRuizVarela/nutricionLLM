@@ -42,20 +42,20 @@ export default function MealSlotCard({ mealSlot, onAddMeal, onClearMeal }: MealS
             {mealSlot.recipe_detail?.name}
           </h4>
 
-          <div className="text-xs text-muted-foreground space-y-1">
-            <div className="flex items-center gap-2">
-              <span>🔥 {mealSlot.recipe_detail?.calories} kcal</span>
-              <span>⏱️ {mealSlot.recipe_detail?.prep_time_minutes} min</span>
-            </div>
+          {mealSlot.recipe_detail && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div className="flex items-center gap-2">
+                <span>🔥 {mealSlot.recipe_detail.calories} kcal</span>
+                <span>⏱️ {mealSlot.recipe_detail.prep_time_minutes} min</span>
+              </div>
 
-            {mealSlot.recipe_detail && (
               <div className="text-xs">
                 P: {mealSlot.recipe_detail.protein}g •
                 C: {mealSlot.recipe_detail.carbs}g •
                 F: {mealSlot.recipe_detail.fats}g
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {mealSlot.notes && (
             <p className="text-xs text-muted-foreground italic mt-2">
@@ -68,7 +68,10 @@ export default function MealSlotCard({ mealSlot, onAddMeal, onClearMeal }: MealS
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onClearMeal(mealSlot)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClearMeal(mealSlot)
+                }}
                 className="h-6 w-6 p-0 text-xs hover:bg-destructive hover:text-destructive-foreground"
               >
                 ×
