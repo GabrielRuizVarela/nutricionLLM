@@ -126,16 +126,20 @@ class LLMService:
         preferred_ingredients: str = ""
     ) -> str:
         """Build the initial prompt for recipe generation with comprehensive profile data"""
-        base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format with EXACTLY these fields:
-- name (string)
-- ingredients (string, comma-separated list)
-- steps (string, numbered steps separated by periods)
-- calories (int)
-- protein (float in grams)
-- carbs (float in grams)
-- fats (float in grams)
-- prep_time_minutes (int)
-- meal_type (string: breakfast, lunch, dinner, or snack)
+        base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format.
+
+IMPORTANT: You MUST include ALL of these fields in your JSON response:
+{
+  "name": "Recipe Name Here",
+  "ingredients": "ingredient1, ingredient2, ingredient3",
+  "steps": "1. Step one. 2. Step two. 3. Step three.",
+  "calories": 500,
+  "protein": 25.0,
+  "carbs": 60.0,
+  "fats": 15.0,
+  "prep_time_minutes": 30,
+  "meal_type": "breakfast"
+}
 
 User context and requirements:"""
 
@@ -206,11 +210,24 @@ User context and requirements:"""
 
     def _build_correction_prompt(self, original_response: str) -> str:
         """Build a correction prompt for malformed JSON"""
-        return f"""The following text contains a recipe but is not valid JSON. Extract the information and output ONLY a valid JSON object with these fields: name, ingredients, steps, calories, protein, carbs, fats, prep_time_minutes, meal_type.
+        return f"""The previous response was incomplete or invalid. Please generate a complete recipe in valid JSON format.
 
-Text: '{original_response}'
+CRITICAL: Include ALL 9 required fields:
+{{
+  "name": "Recipe Name",
+  "ingredients": "list all ingredients here",
+  "steps": "numbered steps here",
+  "calories": number,
+  "protein": number,
+  "carbs": number,
+  "fats": number,
+  "prep_time_minutes": number,
+  "meal_type": "breakfast/lunch/dinner/snack"
+}}
 
-Output only valid JSON, nothing else."""
+Previous incomplete response: {original_response[:300]}
+
+Generate the complete JSON with ALL fields now."""
 
     def _call_llm(self, prompt: str) -> str:
         """
@@ -277,12 +294,18 @@ Output only valid JSON, nothing else."""
                 'protein', 'carbs', 'fats', 'prep_time_minutes', 'meal_type'
             ]
 
-            if all(field in recipe_data for field in required_fields):
-                return recipe_data
+            missing_fields = [field for field in required_fields if field not in recipe_data]
 
-            return None
+            if missing_fields:
+                logger.warning(f"Recipe JSON missing required fields: {missing_fields}")
+                logger.warning(f"Received fields: {list(recipe_data.keys())}")
+                return None
 
-        except json.JSONDecodeError:
+            return recipe_data
+
+        except json.JSONDecodeError as e:
+            logger.warning(f"JSON decode error: {str(e)}")
             return None
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Unexpected error parsing recipe JSON: {str(e)}")
             return None

@@ -46,8 +46,13 @@ export default function RecipeGenerator() {
         try {
             const recipe = await recipeService.generateRecipe(data);
             setGeneratedRecipe(recipe);
-        } catch (error) {
-            setGenerateError('Failed to generate recipe. Please try again.');
+        } catch (error: any) {
+            // Extract error message from backend response
+            const errorMessage = error?.response?.data?.error ||
+                                error?.message ||
+                                'Failed to generate recipe. Please try again.';
+            setGenerateError(errorMessage);
+            console.error('Recipe generation error:', error);
         } finally {
             setIsGenerating(false);
         }
