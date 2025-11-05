@@ -24,3 +24,4 @@ ENV/
 # Environment variables
 .env
 .claude/settings.local.json
+.backend/FoodData_Central_branded_food_json_2025-04-24.json 
