@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Profile(models.Model):
@@ -15,56 +16,6 @@ class Profile(models.Model):
     # === PERSONAL INFORMATION ===
     age = models.IntegerField(
         null=True,
-<<<<<<< HEAD
-        blank=True,
-        help_text="Age in years"
-    )
-    weight_kg = models.FloatField(
-        null=True,
-        blank=True,
-        help_text="Weight in kilograms"
-    )
-    height_cm = models.IntegerField(
-        null=True,
-        blank=True,
-        help_text="Height in centimeters"
-    )
-
-    GENDER_CHOICES = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('other', 'Other'),
-        ('prefer_not_to_say', 'Prefer not to say'),
-    ]
-    gender = models.CharField(
-        max_length=20,
-        choices=GENDER_CHOICES,
-        blank=True,
-        default='',
-        help_text="Gender"
-    )
-
-    ACTIVITY_LEVEL_CHOICES = [
-        ('sedentary', 'Sedentary (little or no exercise)'),
-        ('lightly_active', 'Lightly Active (exercise 1-3 days/week)'),
-        ('moderately_active', 'Moderately Active (exercise 3-5 days/week)'),
-        ('very_active', 'Very Active (exercise 6-7 days/week)'),
-        ('extremely_active', 'Extremely Active (physical job or training twice/day)'),
-    ]
-    activity_level = models.CharField(
-        max_length=20,
-        choices=ACTIVITY_LEVEL_CHOICES,
-        blank=True,
-        default='',
-        help_text="Activity level"
-    )
-
-    # === DIETARY INFORMATION ===
-    goal = models.TextField(
-        blank=True,
-        help_text="Primary nutritional goal"
-    )
-=======
         blank=True,
         help_text="Age in years"
     )
@@ -123,7 +74,6 @@ class Profile(models.Model):
         default='',
         help_text="Primary nutritional goal"
     )
->>>>>>> 146c2b18 (feat: general functionalities changes)
 
     dietary_preferences = models.TextField(
         blank=True,
@@ -202,12 +152,67 @@ class Profile(models.Model):
         help_text="Daily fats target (grams)"
     )
 
+    # === MEAL DISTRIBUTION (Spring 2) ===
+    meals_per_day = models.IntegerField(
+        default=3,
+        validators=[MinValueValidator(1), MaxValueValidator(6)],
+        help_text="Number of meals per day (1-6)"
+    )
+    meal_distribution = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Calorie percentage distribution per meal (e.g., {'1': 30, '2': 40, '3': 30})"
+    )
+    meal_names = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Custom meal names (e.g., {'1': 'Breakfast', '2': 'Lunch', '3': 'Dinner'})"
+    )
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Profile for {self.user.username}"
+
+    def get_meal_calories(self, meal_number):
+        """
+        Calculate calorie target for a specific meal based on distribution.
+
+        Args:
+            meal_number: Meal number (1-indexed)
+
+        Returns:
+            int: Calorie target for the meal, or None if not configured
+        """
+        if not self.daily_calorie_target or not self.meal_distribution:
+            return None
+
+        meal_key = str(meal_number)
+        percentage = self.meal_distribution.get(meal_key)
+
+        if percentage is None:
+            return None
+
+        return int(self.daily_calorie_target * percentage / 100)
+
+    def get_default_meal_names(self):
+        """
+        Get default meal names based on meals_per_day.
+
+        Returns:
+            dict: Dictionary mapping meal numbers to default names
+        """
+        default_names = {
+            1: {1: 'Meal 1'},
+            2: {1: 'Meal 1', 2: 'Meal 2'},
+            3: {1: 'Breakfast', 2: 'Lunch', 3: 'Dinner'},
+            4: {1: 'Breakfast', 2: 'Lunch', 3: 'Dinner', 4: 'Snack'},
+            5: {1: 'Breakfast', 2: 'Morning Snack', 3: 'Lunch', 4: 'Afternoon Snack', 5: 'Dinner'},
+            6: {1: 'Breakfast', 2: 'Morning Snack', 3: 'Lunch', 4: 'Afternoon Snack', 5: 'Dinner', 6: 'Evening Snack'}
+        }
+        return default_names.get(self.meals_per_day, {})
 
     def calculate_bmr(self):
         """

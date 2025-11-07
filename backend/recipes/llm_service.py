@@ -36,6 +36,9 @@ class LLMService:
         daily_fats_target: Optional[int] = None,
         # Ingredient management
         preferred_ingredients: str = "",
+        # Spring 2: Meal context
+        meal_number: Optional[int] = None,
+        meal_percentage: Optional[float] = None,
     ) -> Dict:
         """
         Generate a recipe using LLM Studio with comprehensive user profile data.
@@ -56,6 +59,8 @@ class LLMService:
             daily_carbs_target: Target carbs per meal
             daily_fats_target: Target fats per meal
             preferred_ingredients: Ingredients user likes to use regularly
+            meal_number: Specific meal number (1-6) for this recipe
+            meal_percentage: Percentage of daily calories for this meal (0-100)
 
         Returns:
             Dictionary containing recipe data
@@ -79,7 +84,9 @@ class LLMService:
             daily_protein_target=daily_protein_target,
             daily_carbs_target=daily_carbs_target,
             daily_fats_target=daily_fats_target,
-            preferred_ingredients=preferred_ingredients
+            preferred_ingredients=preferred_ingredients,
+            meal_number=meal_number,
+            meal_percentage=meal_percentage
         )
 
         # Try to generate recipe
@@ -123,26 +130,11 @@ class LLMService:
         daily_protein_target: Optional[int] = None,
         daily_carbs_target: Optional[int] = None,
         daily_fats_target: Optional[int] = None,
-        preferred_ingredients: str = ""
+        preferred_ingredients: str = "",
+        meal_number: Optional[int] = None,
+        meal_percentage: Optional[float] = None
     ) -> str:
         """Build the initial prompt for recipe generation with comprehensive profile data"""
-<<<<<<< HEAD
-        base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format.
-
-IMPORTANT: You MUST include ALL of these fields in your JSON response:
-{
-  "name": "Recipe Name Here",
-  "ingredients": "ingredient1, ingredient2, ingredient3",
-  "steps": "1. Step one. 2. Step two. 3. Step three.",
-  "calories": 500,
-  "protein": 25.0,
-  "carbs": 60.0,
-  "fats": 15.0,
-  "prep_time_minutes": 30,
-  "meal_type": "breakfast"
-}
-
-=======
         base_prompt = """You are a nutrition expert assistant. Generate a recipe in JSON format with EXACTLY these fields:
 - name (string)
 - ingredients (string, comma-separated list)
@@ -154,7 +146,6 @@ IMPORTANT: You MUST include ALL of these fields in your JSON response:
 - prep_time_minutes (int)
 - meal_type (string: breakfast, lunch, dinner, or snack)
 
->>>>>>> 146c2b18 (feat: general functionalities changes)
 User context and requirements:"""
 
         prompt_parts = [base_prompt]
@@ -194,21 +185,24 @@ User context and requirements:"""
             prompt_parts.append(f"- Spice preference: {spice_preference}")
 
         # Nutritional targets
+        # If meal_percentage is provided, use it; otherwise assume equal distribution
+        meal_fraction = meal_percentage / 100 if meal_percentage else (1 / 3)
+
         if daily_calorie_target:
-            # Assume 3 meals per day, so divide by 3 for per-meal target
-            target_per_meal = daily_calorie_target // 3
-            prompt_parts.append(f"- Target calories for this meal: approximately {target_per_meal} kcal")
+            target_per_meal = int(daily_calorie_target * meal_fraction)
+            meal_context = f" (Meal {meal_number})" if meal_number else ""
+            prompt_parts.append(f"- Target calories for this meal{meal_context}: approximately {target_per_meal} kcal")
 
         if daily_protein_target:
-            target_per_meal = daily_protein_target // 3
+            target_per_meal = int(daily_protein_target * meal_fraction)
             prompt_parts.append(f"- Target protein for this meal: approximately {target_per_meal}g")
 
         if daily_carbs_target:
-            target_per_meal = daily_carbs_target // 3
+            target_per_meal = int(daily_carbs_target * meal_fraction)
             prompt_parts.append(f"- Target carbs for this meal: approximately {target_per_meal}g")
 
         if daily_fats_target:
-            target_per_meal = daily_fats_target // 3
+            target_per_meal = int(daily_fats_target * meal_fraction)
             prompt_parts.append(f"- Target fats for this meal: approximately {target_per_meal}g")
 
         # Ingredient preferences and availability

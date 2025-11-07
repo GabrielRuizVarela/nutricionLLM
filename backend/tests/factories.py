@@ -227,3 +227,145 @@ class LowCalorieFoodFactory(FoodFactory):
     protein = 2.0
     carbs = 10.0
     fats = 0.5
+
+
+# Spring 2 Enhancement Factories
+
+class ProfileWithMealDistributionFactory(ProfileFactory):
+    """Factory for profiles with meal distribution configured."""
+    meals_per_day = 4
+    meal_distribution = {"1": 20, "2": 35, "3": 30, "4": 15}
+    meal_names = {"1": "Breakfast", "2": "Lunch", "3": "Dinner", "4": "Snack"}
+    daily_calories = 2000
+
+
+class TraditionalMealDistributionProfileFactory(ProfileFactory):
+    """Factory for profiles with traditional 3-meal distribution (30/40/30)."""
+    meals_per_day = 3
+    meal_distribution = {"1": 30, "2": 40, "3": 30}
+    meal_names = {"1": "Breakfast", "2": "Lunch", "3": "Dinner"}
+    daily_calories = 2000
+
+
+class AthleteMealDistributionProfileFactory(ProfileFactory):
+    """Factory for profiles with athlete 4-meal distribution (25/35/25/15)."""
+    meals_per_day = 4
+    meal_distribution = {"1": 25, "2": 35, "3": 25, "4": 15}
+    meal_names = {"1": "Breakfast", "2": "Lunch", "3": "Dinner", "4": "Post-Workout"}
+    daily_calories = 2500
+
+
+class USDAMealExampleFactory(factory.Factory):
+    """Factory for creating mock USDA meal examples."""
+    class Meta:
+        model = dict
+
+    name = factory.Sequence(lambda n: f'USDA Meal Example {n}')
+    calories = factory.fuzzy.FuzzyInteger(300, 800)
+    protein = factory.fuzzy.FuzzyInteger(15, 60)
+    carbs = factory.fuzzy.FuzzyInteger(30, 100)
+    fats = factory.fuzzy.FuzzyInteger(5, 30)
+    description = factory.Faker('sentence', nb_words=6)
+    source = 'usda'
+
+    @factory.lazy_attribute
+    def ingredients(self):
+        """Generate realistic ingredient list with grams and portions."""
+        return [
+            {
+                "name": "chicken breast",
+                "grams": 170,
+                "portion": "6 oz",
+                "protein_percent": 50,
+                "carbs_percent": 0,
+                "fats_percent": 10
+            },
+            {
+                "name": "brown rice",
+                "grams": 150,
+                "portion": "1 cup cooked",
+                "protein_percent": 15,
+                "carbs_percent": 70,
+                "fats_percent": 5
+            },
+            {
+                "name": "broccoli",
+                "grams": 100,
+                "portion": "1 cup",
+                "protein_percent": 20,
+                "carbs_percent": 60,
+                "fats_percent": 5
+            }
+        ]
+
+
+class BreakfastUSDAExampleFactory(USDAMealExampleFactory):
+    """Factory for breakfast USDA meal examples."""
+    name = factory.Sequence(lambda n: f'Breakfast Example {n}')
+    calories = factory.fuzzy.FuzzyInteger(300, 500)
+
+    @factory.lazy_attribute
+    def ingredients(self):
+        return [
+            {"name": "oats", "grams": 85, "portion": "1 cup"},
+            {"name": "banana", "grams": 120, "portion": "1 medium"},
+            {"name": "almonds", "grams": 15, "portion": "2 tbsp"}
+        ]
+
+
+class LunchUSDAExampleFactory(USDAMealExampleFactory):
+    """Factory for lunch USDA meal examples."""
+    name = factory.Sequence(lambda n: f'Lunch Example {n}')
+    calories = factory.fuzzy.FuzzyInteger(500, 800)
+
+    @factory.lazy_attribute
+    def ingredients(self):
+        return [
+            {"name": "chicken breast", "grams": 170, "portion": "6 oz"},
+            {"name": "mixed vegetables", "grams": 200, "portion": "2 cups"},
+            {"name": "quinoa", "grams": 150, "portion": "1 cup cooked"}
+        ]
+
+
+class DinnerUSDAExampleFactory(USDAMealExampleFactory):
+    """Factory for dinner USDA meal examples."""
+    name = factory.Sequence(lambda n: f'Dinner Example {n}')
+    calories = factory.fuzzy.FuzzyInteger(600, 900)
+
+    @factory.lazy_attribute
+    def ingredients(self):
+        return [
+            {"name": "salmon", "grams": 170, "portion": "6 oz"},
+            {"name": "sweet potato", "grams": 200, "portion": "1 medium"},
+            {"name": "green beans", "grams": 100, "portion": "1 cup"}
+        ]
+
+
+class SnackUSDAExampleFactory(USDAMealExampleFactory):
+    """Factory for snack USDA meal examples."""
+    name = factory.Sequence(lambda n: f'Snack Example {n}')
+    calories = factory.fuzzy.FuzzyInteger(150, 300)
+
+    @factory.lazy_attribute
+    def ingredients(self):
+        return [
+            {"name": "greek yogurt", "grams": 170, "portion": "6 oz"},
+            {"name": "berries", "grams": 75, "portion": "1/2 cup"},
+            {"name": "honey", "grams": 15, "portion": "1 tbsp"}
+        ]
+
+
+class IngredientDetailFactory(factory.Factory):
+    """Factory for creating individual ingredient details."""
+    class Meta:
+        model = dict
+
+    name = factory.Faker('word')
+    grams = factory.fuzzy.FuzzyInteger(50, 200)
+    portion = factory.Faker('random_element', elements=[
+        '1 cup', '2 tbsp', '1 medium', '6 oz', '1/2 cup',
+        '2 large eggs', '1 tsp', '3 oz', '1.5 cups'
+    ])
+    protein_percent = factory.fuzzy.FuzzyInteger(10, 60)
+    carbs_percent = factory.fuzzy.FuzzyInteger(0, 70)
+    fats_percent = factory.fuzzy.FuzzyInteger(5, 40)
