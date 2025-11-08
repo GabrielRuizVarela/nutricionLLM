@@ -189,11 +189,7 @@ export default function ProfileForm() {
                   id="age"
                   type="number"
                   placeholder="e.g., 30"
-<<<<<<< HEAD
                   {...register('age', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('age', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.age && (
                   <p className="text-sm text-destructive">{errors.age.message}</p>
@@ -207,11 +203,7 @@ export default function ProfileForm() {
                   type="number"
                   step="0.1"
                   placeholder="e.g., 70"
-<<<<<<< HEAD
                   {...register('weight_kg', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('weight_kg', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.weight_kg && (
                   <p className="text-sm text-destructive">{errors.weight_kg.message}</p>
@@ -224,11 +216,7 @@ export default function ProfileForm() {
                   id="height_cm"
                   type="number"
                   placeholder="e.g., 175"
-<<<<<<< HEAD
                   {...register('height_cm', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('height_cm', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.height_cm && (
                   <p className="text-sm text-destructive">{errors.height_cm.message}</p>
@@ -508,11 +496,7 @@ export default function ProfileForm() {
                   id="daily_calorie_target"
                   type="number"
                   placeholder={profile?.tdee ? `e.g., ${profile.tdee}` : "e.g., 2000"}
-<<<<<<< HEAD
                   {...register('daily_calorie_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('daily_calorie_target', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.daily_calorie_target && (
                   <p className="text-sm text-destructive">{errors.daily_calorie_target.message}</p>
@@ -525,11 +509,7 @@ export default function ProfileForm() {
                   id="daily_protein_target"
                   type="number"
                   placeholder="e.g., 150"
-<<<<<<< HEAD
                   {...register('daily_protein_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('daily_protein_target', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.daily_protein_target && (
                   <p className="text-sm text-destructive">{errors.daily_protein_target.message}</p>
@@ -542,11 +522,7 @@ export default function ProfileForm() {
                   id="daily_carbs_target"
                   type="number"
                   placeholder="e.g., 200"
-<<<<<<< HEAD
                   {...register('daily_carbs_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('daily_carbs_target', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.daily_carbs_target && (
                   <p className="text-sm text-destructive">{errors.daily_carbs_target.message}</p>
@@ -559,11 +535,7 @@ export default function ProfileForm() {
                   id="daily_fats_target"
                   type="number"
                   placeholder="e.g., 65"
-<<<<<<< HEAD
                   {...register('daily_fats_target', { setValueAs: (v) => v === '' ? undefined : Number(v) })}
-=======
-                  {...register('daily_fats_target', { valueAsNumber: true })}
->>>>>>> 146c2b18 (feat: general functionalities changes)
                 />
                 {errors.daily_fats_target && (
                   <p className="text-sm text-destructive">{errors.daily_fats_target.message}</p>
