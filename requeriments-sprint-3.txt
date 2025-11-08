@@ -1,0 +1,150 @@
+Perfecto. Vamos a integrar dos nuevas pantallas clave en tu roadmap, posicionadas estratégicamente en Sprint 3 (donde ya tienes metas nutricionales y planificación básica), porque dependen de la existencia de perfiles y metas, pero permiten personalización avanzada antes de llegar a la planificación semanal. 
+
+Estas pantallas atienden tres perfiles distintos: 
+
+    Nutricionista: define planes complejos para pacientes.
+    Usuario intermedio: quiere guía pero sin ayuda profesional.
+    Usuario final: necesita que el sistema lo acompañe paso a paso.
+     
+
+ 
+🎯 Nuevas Pantallas para Sprint 3 
+1. Pantalla: Diseñador de Dieta Personalizado 
+
+(Para nutricionistas y usuarios avanzados) 
+
+Ubicación: /diet-designer
+Acceso:   
+
+    Nutricionistas: desde el perfil de un paciente  
+    Usuarios: desde su propio panel de "Metas"
+     
+
+Funcionalidad:
+Una interfaz visual donde el usuario construye su dieta desde cero definiendo: 
+
+    Distribución de comidas:   
+        Número de comidas/día (1–6)  
+        Nombre personalizado por comida (ej: "Pre-entreno", "Cena ligera")  
+        Porcentaje calórico por comida (con sliders que suman 100%)
+         
+
+    Macros por comida (nivel avanzado):   
+        Por cada comida, definir:  
+            Calorías objetivo  
+            Gramos o % de proteínas, carbohidratos, grasas
+             
+        Preajustes rápidos:  
+            "Alta proteína" → 40% P / 30% C / 30% F  
+            "Cetogénica" → 20% P / 5% C / 75% F  
+            "Equilibrada" → 30% P / 40% C / 30% F
+             
+         
+
+    Restricciones y preferencias:   
+        Alergias, intolerancias, preferencias culturales  
+        Ingredientes prohibidos o siempre incluidos
+         
+
+    Objetivo de la dieta:   
+        Pérdida de peso  
+        Ganancia muscular  
+        Mantenimiento  
+        Rendimiento deportivo  
+        Salud metabólica
+         
+     
+
+Resultado:
+Al guardar, se generan metas diarias y por comida que se usan en:   
+
+    Generación de recetas  
+    Planificación semanal  
+    Cálculo de progreso
+     
+
+ 
+2. Pantalla: Asistente de Dieta Interactivo (con LLM) 
+
+(Para usuarios intermedios y finales) 
+
+Ubicación: /diet-assistant
+Acceso: Todos los usuarios (botón "Necesito ayuda para definir mis metas") 
+
+Funcionalidad:
+Una conversación guiada con el LLM que hace preguntas para determinar automáticamente las metas nutricionales y la estructura de la dieta. 
+
+Flujo de conversación (ejemplo): 
+
+    LLM: "¡Hola! Soy tu asistente nutricional. ¿Cuál es tu principal objetivo?"
+    → Opciones: Perder peso / Ganar músculo / Tener más energía / Otro 
+
+    LLM: "¿Cuántas comidas prefieres al día?"
+    → Slider + ejemplos: "3 comidas", "4 comidas (incluyendo merienda)", "5–6 (comidas pequeñas)" 
+
+    LLM: "¿Tienes alguna restricción?"
+    → Checkboxes: Vegetariano / Vegano / Sin gluten / Sin lactosa / Alergias (especificar) 
+
+    LLM: "¿Cuánto tiempo puedes dedicar a cocinar?"
+    → Opciones: "Menos de 15 min", "15–30 min", "Más de 30 min" 
+
+    LLM: "¿Qué tipo de comidas disfrutas?"
+    → Etiquetas seleccionables: "Mediterránea", "Asiática", "Rápida", "Tradicional", "Vegetariana" 
+
+    LLM: (Opcional) "¿Quieres que calcule tus calorías automáticamente?"
+    → Si: pide peso, altura, edad, género, nivel de actividad
+    → Si no: "¿Cuántas calorías crees que necesitas al día?" 
+
+    LLM: "Perfecto. Basado en esto, te propongo:"
+    → Muestra un resumen editable:   
+        Calorías diarias: 2,200  
+        Distribución: Desayuno (25%), Almuerzo (40%), Cena (30%), Snack (5%)  
+        Macros: 150g proteína, 220g carbohidratos, 60g grasas
+        → Botones: "Aceptar y guardar" / "Ajustar manualmente"
+         
+     
+
+Resultado:
+Al aceptar, se actualizan automáticamente los campos del perfil del usuario (metas, ingredientes, distribución). El usuario puede luego ir al Diseñador de Dieta para ajustes finos. 
+ 
+🔗 Integración con Roles 
+Nutricionista
+	
+✅ Sí (para pacientes)
+	
+❌ No (define metas manualmente)
+Usuario intermedio
+	
+✅ Sí (quiere control)
+	
+✅ Sí (para empezar)
+Usuario final
+	
+❌ No (demasiado técnico)
+	
+✅ Sí (guía paso a paso)
+ 
+ 
+ 
+📌 Actualización del Roadmap (Sprint 3 ampliado) 
+Sprint 3: Personalización Avanzada y Planificación Semanal 
+
+    ✅ Cuadrícula semanal (7 días × comidas)  
+    ✅ Asignación y reemplazo de recetas  
+    ✅ NUEVO: Diseñador de Dieta Personalizado (/diet-designer)  
+    ✅ NUEVO: Asistente de Dieta Interactivo con LLM (/diet-assistant)  
+    ✅ Diseño de macros por comida (heredado del diseñador o asistente)  
+    ✅ Soporte total en español  
+    ✅ CRUD robusto para recetas y planes  
+    ✅ Conversación guiada para afinar recetas  
+    ✅ Exportación a PDF del plan semanal
+     
+
+ 
+💡 Beneficios Clave 
+
+    Reduce la fricción de entrada: el asistente guía a usuarios nuevos sin abrumarlos.  
+    Profesionaliza la herramienta: el diseñador da control total a nutricionistas.  
+    Aumenta la retención: los usuarios se sienten acompañados en su proceso.  
+    Genera datos de calidad: las metas definidas aquí alimentan toda la experiencia posterior (recetas, planes, seguimiento).
+     
